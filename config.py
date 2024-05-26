@@ -10,3 +10,7 @@ MONGO_DB_URL = getenv(
     "MONGO_DB_URL",
     "mongodb+srv://moni:<password>@cluster0.i3djv5s.mongodb.net/?retryWrites=true&w=majority",
 )
+
+AI_API_KEY = "7Y5hgMnlTjtjCyz0"
+
+AI_BID = "182191"
