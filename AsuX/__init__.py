@@ -19,8 +19,8 @@ from config import MONGO_DB_URL, TOKEN
 TOKEN = TOKEN
 MONGO_DB_URL = MONGO_DB_URL
 
-AI_API_KEY = "RBPOWF2m8z85prBQ"
-AI_BID = "171092"
+AI_API_KEY = "7Y5hgMnlTjtjCyz0"
+AI_BID = "182191"
 
 StartTime = time.time()
 
