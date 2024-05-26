@@ -15,34 +15,9 @@ from AsuX import *
 USERS_GROUP = 11
 
 
-from config import MONGO_DB_URL, AI_BID, AI_API_KEY
-
-# Connect to MongoDB
-chatbotdb = MongoClient(MONGO_DB_URL)
-chatbotai = chatbotdb["Word"]["WordDb"]
-chat_settings = chatbotdb["ChatSettings"]["Settings"]
-
-# Define the command handler to toggle the chatbot
-async def toggle_chatbot(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat = update.effective_chat
-    chat_setting = chat_settings.find_one({"chat_id": chat.id})
-    if chat_setting and chat_setting.get("chatbot_enabled", False):
-        chat_settings.update_one({"chat_id": chat.id}, {"$set": {"chatbot_enabled": False}})
-        await update.message.reply_text("Chatbot has been disabled in this chat.")
-    else:
-        chat_settings.update_one({"chat_id": chat.id}, {"$set": {"chatbot_enabled": True}}, upsert=True)
-        await update.message.reply_text("Chatbot has been enabled in this chat.")
-
-# Log user messages and respond if the chatbot is enabled
 async def log_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
     message = update.effective_message
-    
-    # Check if chatbot is enabled for this chat
-    chat_setting = chat_settings.find_one({"chat_id": chat.id})
-    if not (chat_setting and chat_setting.get("chatbot_enabled", False)):
-        return
-    
     try:
         if (
             message.text.startswith("!")
@@ -54,7 +29,8 @@ async def log_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
     except Exception:
         pass
-    
+    chatbotdb = MongoClient(MONGO_DB_URL)
+    chatbotai = chatbotdb["Word"]["WordDb"]
     if not message.reply_to_message:
         K = []
         is_chat = chatbotai.find({"chat": chat.id, "word": message.text})
@@ -131,7 +107,6 @@ async def log_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         }
                     )
 
-# Add handlers to application
-def add_chatbot_handlers(application):
-    application.add_handler(CommandHandler("chatbot", toggle_chatbot))
-    application.add_handler(MessageHandler(filters.ALL, log_user, block=False))
+
+USER_HANDLER = MessageHandler(filters.ALL, log_user, block=False)
+rani.add_handler(USER_HANDLER, USERS_GROUP)
